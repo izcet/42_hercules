@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 21:24:03 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/17 15:25:10 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 01:17:52 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,7 @@
 int		main(int argc, char **argv)
 {
 	int					sockfd;
-	int					port;
 	int					br;
-	struct sockaddr_in	serv_addr;
 	char				*buffer;
 	int					ret;
 
@@ -27,32 +25,26 @@ int		main(int argc, char **argv)
 		return (0);
 	}
 	
-	port = ft_atoi(argv[2]);
-
 	sockfd = open_inet_socket();
 	if (sockfd < 0)
-		error("Error opening socket.");
+		error("opening socket.");
 	
-	ft_bzero((char*) &serv_addr, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(port);
-	inet_aton(argv[1], (struct in_addr *) &serv_addr.sin_addr.s_addr);
-	if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
-		error("Error connecting.");
-	printf("connection made\n");
+	if (connect_to_ip(argv[1], argv[2], sockfd) < 0)
+		error("connecting.");
+	printf("Connection made to %s port %s\n\n", argv[1], argv[2]);
 	
 	while ((br = get_next_line(0, &buffer)) > 0)
 	{
 		ret = write(sockfd, buffer, ft_strlen(buffer));
 		free(buffer);
 		if (ret < 0)
-			error("Error writing to socket.");
+			error("writing to socket.");
 		ret = write(sockfd, "\0", 1);
 		if (ret < 0)
-			error("Error writing to socket.");
+			error("writing to socket.");
 	}
 	if (br == -1)
-		error("Error reading from STDIN.");
+		error("reading from STDIN.");
 	
 	printf("transmission sent\n");
 	
@@ -62,7 +54,7 @@ int		main(int argc, char **argv)
 		free(buffer);
 	}
 	if (br == -1)
-		error("Error reading from socket.");
+		error("reading from socket.");
 	
 	close(sockfd);
 	return (0);
