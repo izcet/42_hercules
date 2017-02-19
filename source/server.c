@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 18:40:45 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 16:37:45 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 17:48:19 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,15 @@ static void				listen_to_client(s_srv *srv)
 			{
 				if (ft_strcmp((*tc).buffer, "ping") == 0)
 					write((*tc).sockfd, "pong\npong\n", 10);
-				if (ft_strcmp((*tc).buffer, "fuck you") == 0)
+				else if (ft_strcmp((*tc).buffer, "fuck you") == 0)
 				{
 					write((*tc).sockfd, "No, Fuck you.\n", 14);
 					close((*tc).sockfd);
 					(*tc).sockfd = -1;
 					(*tc).br = -1;
 				}
+				else
+					write((*tc).sockfd, "\n", 1);
 			}
 		}
 		_exit(0);
@@ -80,9 +82,6 @@ int						main(int argc, char **argv)
 			(*srv).first = tmp_cli;
 			listen_to_client(srv);
 		}
-//		int t = sleep(1);
-//		(void)t;
-
 	}
 	close_clients(srv);	
 	close((*srv).sockfd);

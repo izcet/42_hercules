@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 14:33:04 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 16:38:31 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 17:01:43 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,6 @@ s_srv	*init_serv_struct(char *port);
 s_cli	*init_cli_struct(void);
 int		client_connection(s_cli *cli, s_srv *srv);
 void	close_clients(s_srv *srv);
+int		connect_to_server(char *ip, char *port);
 
 #endif

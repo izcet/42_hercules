@@ -6,7 +6,7 @@
 #    By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/02/16 23:07:18 by irhett            #+#    #+#              #
-#    Updated: 2017/02/18 15:05:50 by irhett           ###   ########.fr        #
+#    Updated: 2017/02/18 17:02:03 by irhett           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ FLAG		=	-Wall -Werror -Wextra
 DIR			=	source/
 SRCFILES	=	bind_local_socket.c open_inet_socket.c connect_to_ip.c \
 				init_sighandler.c init_serv_struct.c init_cli_struct.c \
-				client_connection.c close_clients.c
+				client_connection.c close_clients.c connect_to_server.c \
+
 SRCS		=	$(addprefix $(DIR), $(SRCFILES))
 SRV			=	server
 CLI			=	client
