@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 18:40:45 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 16:06:13 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 16:37:45 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,23 @@
 
 volatile sig_atomic_t	done = 0;
 
-void					term(int signum)
+static void				term(int signum)
 {
-	ft_putendl("");
-	if (signum == SIGTERM)
-		printf("Process killed by SIGTERM\n");
 	if (signum == SIGINT)
-		printf("Process killed by SIGINT\n");
+		ft_putchar('\n');
+	if (signum == SIGTERM)
+		ft_putendl("Ouch! Why'd you have to stab me in the back?");
 	done = 1;
 }
 
-void					listen_to_client(s_srv *srv)
+static void				listen_to_client(s_srv *srv)
 {
 	pid_t	this_pid;
 	s_cli	*tc;
 
 	this_pid = fork();
-	if (this_pid)
+	if (!this_pid)
 	{
-		printf("PID of fork is %i\n", this_pid);
 		tc = (*srv).first;
 		(*tc).pid = this_pid;
 		while (!done && (*tc).br >= 0)
@@ -50,7 +48,7 @@ void					listen_to_client(s_srv *srv)
 				}
 			}
 		}
-		exit(0);
+		_exit(0);
 	}
 }
 
@@ -70,13 +68,6 @@ int						main(int argc, char **argv)
 		error("initiating sigterm handler.");
 	while (!done)
 	{
-		int t = sleep(1);
-		while (t > 0)
-		{
-			//this block enters when a kill is recieved or done is not 0
-			t = sleep(t);
-		}
-
 		listen((*srv).sockfd, 5);
 		tmp_cli = init_cli_struct();
 		(*tmp_cli).sockfd = client_connection(tmp_cli, srv);
@@ -88,8 +79,10 @@ int						main(int argc, char **argv)
 			(*tmp_cli).next = (*srv).first;
 			(*srv).first = tmp_cli;
 			listen_to_client(srv);
-
 		}
+//		int t = sleep(1);
+//		(void)t;
+
 	}
 	close_clients(srv);	
 	close((*srv).sockfd);
