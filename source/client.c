@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 21:24:03 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 18:53:29 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 19:01:19 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ int						main(int argc, char **argv)
 		error("initiating sigterm handler.");
 	while (!done)
 	{
-		//sleep(1);
 		br = get_next_line(0, &user_mess);
 		if (br > 0)
 		{
+			user_mess = gnl_concat(user_mess, "\n", 1, 0);
 			br = write(sockfd, user_mess, ft_strlen(user_mess));
 			free(user_mess);
 			if (br < 0)
