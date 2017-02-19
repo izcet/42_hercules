@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 21:24:03 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 18:09:38 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 18:53:29 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,18 @@ int						main(int argc, char **argv)
 		printf("Usage: %s <host ip> <host port>", argv[0]);
 		return (0);
 	}
-
-//	int flags;
 	sockfd = connect_to_server(argv[1], argv[2]);
-/*	if ((flags = fcntl(sockfd, F_GETFL, 0)) < 0)
+	if ((br = fcntl(sockfd, F_GETFL, 0)) < 0)
 		error("setting non-blocking 1");
-	if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) < 0)
+	if (fcntl(sockfd, F_SETFL, br | O_NONBLOCK) < 0)
 		error("setting non-blocking 2");
-*/
 	if (init_sighandler(&action, &term) != 0)
 		error("initiating sigterm handler.");
 	while (!done)
 	{
-		ft_putendl("Enter input to send:");
+		//sleep(1);
 		br = get_next_line(0, &user_mess);
-		if (br < 0)
-			ft_putendl("Error reading from STDIN.");
-		else
+		if (br > 0)
 		{
 			br = write(sockfd, user_mess, ft_strlen(user_mess));
 			free(user_mess);
@@ -63,7 +58,6 @@ int						main(int argc, char **argv)
 				done = 1;
 			}
 		}
-		ft_putendl("Done sending. Receiving:");
 		br = 1;
 		sleep(1);
 		while ((br >= 0) && (!done))
@@ -74,7 +68,6 @@ int						main(int argc, char **argv)
 				write(1, serv_mess, br);
 			else
 			{
-				printf("Errno is %i\n", errno);
 				if (errno != EWOULDBLOCK)
 				{
 					ft_putendl("Error reading from socket.");
@@ -82,7 +75,6 @@ int						main(int argc, char **argv)
 				}
 			}
 		}
-		ft_putendl("Done receiving.");
 	}
 	ft_putendl("Disconnecting from server.");	
 	close(sockfd);

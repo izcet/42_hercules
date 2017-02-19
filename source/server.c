@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 18:40:45 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 17:48:19 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 18:32:52 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,12 @@ static void				listen_to_client(s_srv *srv)
 				{
 					write((*tc).sockfd, "No, Fuck you.\n", 14);
 					close((*tc).sockfd);
+					ft_putendl("Stopped talking to client, they were rude.");
 					(*tc).sockfd = -1;
 					(*tc).br = -1;
 				}
 				else
-					write((*tc).sockfd, "\n", 1);
+					write((*tc).sockfd, "I don't understand you.\n", 24);
 			}
 		}
 		_exit(0);
