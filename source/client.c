@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 21:24:03 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 01:17:52 by irhett           ###   ########.fr       */
+/*   Updated: 2017/02/18 13:06:13 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ int		main(int argc, char **argv)
 	
 	sockfd = open_inet_socket();
 	if (sockfd < 0)
-		error("opening socket.");
+		error("Error opening socket.");
 	
 	if (connect_to_ip(argv[1], argv[2], sockfd) < 0)
-		error("connecting.");
+		error("Error connecting.");
 	printf("Connection made to %s port %s\n\n", argv[1], argv[2]);
 	
 	while ((br = get_next_line(0, &buffer)) > 0)
@@ -38,13 +38,13 @@ int		main(int argc, char **argv)
 		ret = write(sockfd, buffer, ft_strlen(buffer));
 		free(buffer);
 		if (ret < 0)
-			error("writing to socket.");
+			error("Error writing to socket.");
 		ret = write(sockfd, "\0", 1);
 		if (ret < 0)
-			error("writing to socket.");
+			error("Error writing to socket.");
 	}
 	if (br == -1)
-		error("reading from STDIN.");
+		error("Error reading from STDIN.");
 	
 	printf("transmission sent\n");
 	
@@ -54,7 +54,7 @@ int		main(int argc, char **argv)
 		free(buffer);
 	}
 	if (br == -1)
-		error("reading from socket.");
+		error("Error reading from socket.");
 	
 	close(sockfd);
 	return (0);
