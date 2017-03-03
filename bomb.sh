@@ -10,7 +10,11 @@ D="es*[0m"
 #[2A
 echo $A$B$C$D
 #[2A
-rm "$0"
+if [ -f "bomb.sh" ] ;
+then
+rm bomb.sh
+fi
+touch "wreckage.txt"
 #[2A
 exit
 [2A

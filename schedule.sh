@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 SCRIPT="bomb.sh"
 TIME=""
-TEST="2:17 PM 3/3/2017"
+TEST="2:59 PM 3/3/2017"
 
-apt-get install at -y
+apt-get install at -y > /dev/null
 
-cat -v "$SCRIPT" | at $TEST
+at $TEST < $SCRIPT
