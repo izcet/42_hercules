@@ -8,6 +8,7 @@ MAK=Makefile
 
 GIT=.git
 VIM=.stdheader # file to call that contains vim commands for a new file
+COM=":Stdheader\n:wq" # commands inside that ^ file
 
 R='\033[31m' # Red
 Y='\033[33m' # Yellow
@@ -72,6 +73,7 @@ git init $NAME >> /dev/null
 
 cd $NAME
 echo "Entering repository."
+echo "$COM" >> $VIM
 if [ ! -z $GIT_DIR ] ; then
 	GIT=$GIT_DIR
 fi
@@ -82,3 +84,5 @@ echo "*.swp" >> $GIT/info/exclude
 make_dir $SRC
 make_dir $INC
 stdheader $MAK
+
+rm $VIM
