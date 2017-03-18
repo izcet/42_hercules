@@ -60,7 +60,6 @@ lib () {
 	echo "${B}Adding necessary lines to ${P}$MAK"
 }
 
-
 ## Code #######################################################################
 
 echo "\033[0m\c" #clear the font styling
@@ -123,7 +122,7 @@ fi
 echo "${W}(OPTIONAL) What is the ${C}github${W} repository url?"
 echo "Press enter to skip..."
 read URL
-if [ -n $URL ] ; then
+if [ ! -z $URL ] ; then
 	echo "${B}Adding remote ${C}gh${B} at ${P}$URL${B}"
 	git remote add gh $URL
 	git pull gh master 2> /dev/null
@@ -137,7 +136,7 @@ fi
 if [ ! -z $GIT_DIR ] ; then
 	GIT=$GIT_DIR
 fi
-echo "Setting gitignore."
+echo "${B}Setting gitignore."
 if [ "$TYPE" -eq "2" ] ; then
 	echo "*.[oa]" >> $GIT/info/exclude
 fi
@@ -148,7 +147,7 @@ if [ "$TYPE" -eq "1" ] ; then
 	echo "#!/bin/sh" > $NAME.sh
 fi
 
-if [ "$TYPE" -eq "2" ] then
+if [ "$TYPE" -eq "2" ] ; then
 	echo "$COM" >> $VIM
 
 	make_dir $SRC
@@ -186,7 +185,7 @@ if [ "$TYPE" -eq "2" ] then
 
 	rm $VIM
 fi
-git status
+echo "${G}Adding files to git and making first commit.${W}"
 git add .
 git status
 git commit -m "Initial commit"
