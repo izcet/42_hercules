@@ -1,4 +1,4 @@
-#!/bin/shi
+#!/bin/sh
 
 ## Variables ##################################################################
 
@@ -49,15 +49,30 @@ add_line () {
 	echo "$1" >> $MAK
 }
 
+insert_at () {
+	sed -i '' -e "$2s/$/$'$1\n'"
+}
 
-lib () {
+add_lib () {
 	if [ ! -d $LIBDIR/$LIB ] ; then
-		error "No ${P}$LIB${R} directory at ${P}$LIBDIR"
+		error "No ${P}$LIB${R} directory found at ${P}$LIBDIR"
 		return 1
 	fi
+	make_dir $LIB
 	echo "${B}Copying files from library ${P}$LIB"
-	cp -rf $LIBDIR/$LIB/*~.git ./$LIB/
+	cp -rf $LIBDIR/$LIB/^.git ./$LIB/
 	echo "${B}Adding necessary lines to ${P}$MAK"
+	NLIB=$(echo $LIB | awk '{print toupper($0)}')
+	add_line "\n\$($NLIB):"
+	add_line "\t@\$(MAKE) -C \$(${NLIB}_DIR)"
+	insert_at "\n" 27
+	insert_at "$NLIB\t\t=\t\$(${NLIB}_DIR)/\$(${NLIB}_LIB)\n" 27
+	insert_at "${NLIB}_INC\t=\t#includes folder" 27
+	insert_at "${NLIB}_LIB\t=\t#$LIB.a" 27
+	insert_at "${NLIB}_DIR\t=\t$LIB" 27
+	# add to INC_DIR
+	# add to .PHONY
+
 }
 
 ## Code #######################################################################
@@ -79,7 +94,7 @@ fi
 
 if [ -f $NAME ] ; then
 	error "A file named ${P}$NAME${R} already exists."
-	exit
+	exiti
 fi
 
 echo "${W}What kind of project is ${P}$NAME${W} going to be?"
@@ -109,6 +124,8 @@ echo "${W}What is the ${C}vogsphere${W} repository url?"
 read URL
 while [ -z $URL ] ; do
 	error "Directory or URL cannot be NULL"
+	echo "${W}What is the ${C}vogsphere${W} repository url?"
+	read URL
 done
 echo "${B}Adding remote ${C}origin${B} at ${P}$URL${B}"
 git remote add origin $URL
@@ -131,6 +148,8 @@ if [ ! -z $URL ] ; then
 		git remote rm gh
 		echo "${B}Remote ${C}gh${B} removed."
 	fi
+else
+	echo "\033[1A${B}Skipping..."
 fi
 
 if [ ! -z $GIT_DIR ] ; then
@@ -165,7 +184,7 @@ if [ "$TYPE" -eq "2" ] ; then
 	add_line "CC\t\t\t=\tgcc"							#line 15
 	add_line "CFLAGS\t\t=\t-Wall -Werror -Wextra"		#line 16
 	add_line "XFLAGS\t\t=\t#-flags -for -X"			#line 17
-	add_line "FLAGS\t\t=\t\$(CFLAGS) \$(XFLAGS)\n"
+	add_line "FLAGS\t\t=\t\$(CFLAGS) \$(XFLAGS)\n" #18 19
 	add_line "SRC_DIR\t\t=\t$SRC"
 	add_line "SRC_FILE\t=\t##!!##"
 	add_line "SRCS\t\t=\t\$(addprefix \$(SRC_DIR)/, \$(SRC_FILE))\n"
@@ -181,11 +200,47 @@ if [ "$TYPE" -eq "2" ] ; then
 	add_line "\t@\$(CC) -c \$^ \$(CFLAGS) \$(INC_DIR) -o \$@\n"
 	add_line "clean:"
 	add_line "\t@rm -rf \$(OBJ_DIR)"
-	add_line "\t#@cd \$(LIBFT_DIR) && make clean)"
+	add_line "\t#@cd \$(LIBFT_DIR) && make clean"
+	add_line "fclean:"
+	add_line "\t@rm -f \$(NAME)"
+	add_line "\t#@cd \$(LIBFT_DIR) && make fclean\n"
+	add_line "re: fclean all\n"
+	add_line "\$(OBJ_DIR):"
+	add_line "\t@mkdir -p \$(OBJ_DIR)"
 
+	echo "${W}Would you like to include $P$LIB$W from $P$LIBDIR$W ?"
+	echo "\t${C}[1]$W yes"
+	echo "\t${C}[2]$W no"
+	read TYPE
+	if [ "$TYPE" -eq "1" ] ; then
+		add_lib
+	elif [ "$TYPE" -ne "2" ] ; then
+		error "${C}$TYPE${R} is not a valid response."
+	fi
+
+	echo "${W}Would you like to include another library?"
+	echo "\t${C}[1]$W yes"
+	echo "\t${C}[2]$W no"
+	read TYPE
+	while [ "$TYPE" -eq "1" ] ; do
+		echo "${W}Enter library name: (folder name should match)"
+		read LIB
+		echo "Enter path to library:"
+		read LIBDIR
+		add_lib
+		echo "${W}Would you like to include another library?"
+		echo "\t${C}[1]$W yes"
+		echo "\t${C}[2]$W no"
+		read TYPE
+	done
+	if [ "$TYPE" -ne "2" ] ; then
+		error "${C}$TYPE${R} is not a valid response."
+	fi
 	rm $VIM
-fi
-echo "${G}Adding files to git and making first commit.${W}"
-git add .
-git status
-git commit -m "Initial commit"
+	fi
+
+	echo "${B}Adding files to git and making first commit.${W}"
+	git add .
+	git status
+	git commit -m "Initial commit"
+	echo "\n\t${G}Done.${N}\n"
