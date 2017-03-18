@@ -58,9 +58,9 @@ add_lib () {
 		error "No ${P}$LIB${R} directory found at ${P}$LIBDIR"
 		return 1
 	fi
-	make_dir $LIB
-	echo "${B}Copying files from library ${P}$LIB"
-	cp -rf $LIBDIR/$LIB/^.git ./$LIB/
+	make_dir ./$LIB
+	echo "${B}Copying files from library ${P}$LIBDIR/$LIB"
+	ls -1A $LIBDIR/$LIB/ | grep -v .git | xargs -I % cp -rf $LIBDIR/$LIB/% ./$LIB/
 	echo "${B}Adding necessary lines to ${P}$MAK"
 	NLIB=$(echo $LIB | awk '{print toupper($0)}')
 	add_line "\n\$($NLIB):"
