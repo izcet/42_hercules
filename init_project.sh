@@ -6,7 +6,7 @@ INC=inc
 SRC=src
 MAK=Makefile
 LIB=libft
-LIBDIR=~/backups/projects
+LDIR=~/backups/projects
 
 GIT=.git
 VIM=.stdheader # file to call that contains vim commands for a new file
@@ -50,29 +50,36 @@ add_line () {
 }
 
 insert_at () {
-	sed -i '' -e "$2s/$/$'$1\n'"
+	head -n $2 $MAK > .temp$MAK
+	echo "$1\c" >> .temp$MAK
+	tail -n +$2 $MAK >> .temp$MAK
+	mv .temp$MAK $MAK
 }
 
 add_lib () {
-	if [ ! -d $LIBDIR/$LIB ] ; then
-		error "No ${P}$LIB${R} directory found at ${P}$LIBDIR"
+	if [ ! -d $LDIR/$LIB ] ; then
+		error "No ${P}$LIB${R} directory found at ${P}$LDIR"
 		return 1
 	fi
 	make_dir ./$LIB
-	echo "${B}Copying files from library ${P}$LIBDIR/$LIB"
-	ls -1A $LIBDIR/$LIB/ | grep -v .git | xargs -I % cp -rf $LIBDIR/$LIB/% ./$LIB/
+	echo "${B}Copying files from library ${P}$LDIR/$LIB"
+	ls -1A $LDIR/$LIB/ | grep -v .git | xargs -I % cp -rf $LDIR/$LIB/% ./$LIB/
 	echo "${B}Adding necessary lines to ${P}$MAK"
 	NLIB=$(echo $LIB | awk '{print toupper($0)}')
 	add_line "\n\$($NLIB):"
 	add_line "\t@\$(MAKE) -C \$(${NLIB}_DIR)"
-	insert_at "\n" 27
-	insert_at "$NLIB\t\t=\t\$(${NLIB}_DIR)/\$(${NLIB}_LIB)\n" 27
-	insert_at "${NLIB}_INC\t=\t#includes folder" 27
+
+	insert_at "" 27
+	insert_at "$NLIB\t\t=\t\$(${NLIB}_DIR)/\$(${NLIB}_LIB)" 27
+	insert_at "${NLIB}_INC\\t=\\t#includes folder" 27
 	insert_at "${NLIB}_LIB\t=\t#$LIB.a" 27
 	insert_at "${NLIB}_DIR\t=\t$LIB" 27
-	# add to INC_DIR
-	# add to .PHONY
-
+	sed -i '' -e "s/I inc/I \\\$(${NLIB}_DIR)/\\\$(${NLIB}_INC) -I inc/" $MAK
+	sed -i '' "s/^.PHONY: /.PHONY: $LIB /" $MAK
+	sed -i '' "s/^all: /all: \$($NLIB) /" $MAK
+	#sed -i '' "s/^clean:/clean:
+	# handle clean
+	# handle fclean
 }
 
 ## Code #######################################################################
@@ -94,7 +101,7 @@ fi
 
 if [ -f $NAME ] ; then
 	error "A file named ${P}$NAME${R} already exists."
-	exiti
+	exit
 fi
 
 echo "${W}What kind of project is ${P}$NAME${W} going to be?"
@@ -163,7 +170,7 @@ echo "*.swp" >> $GIT/info/exclude
 
 if [ "$TYPE" -eq "1" ] ; then
 	echo "${G}Creating file ${P}$NAME.sh"
-	echo "#!/bin/sh" > $NAME.sh
+	echo "#!/bin/sh\n" > $NAME.sh
 fi
 
 if [ "$TYPE" -eq "2" ] ; then
@@ -193,7 +200,7 @@ if [ "$TYPE" -eq "2" ] ; then
 	add_line "OBJS\t\t=\t\$(addprefix \$(OBJ_DIR)/, \$(OBJ_FILE))\n"
 	add_line "INC_DIR\t\t=\t-I $INC\n" # append text to specific lines
 	add_line ".PHONY: all clean fclean re\n" #libft
-	add_line "all: #\$(LIB_1) \$(LIB_2) \$(NAME)\n"
+	add_line "all: \$(NAME)\n"
 	add_line "\$(NAME): \$(SRCS) | \$(OBJS)"
 	add_line "\t\$(CC) \$(FLAGS) \$(LIB) \$(OBJS) \$(INC_DIR) -o \$(NAME)\n"
 	add_line "\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.c | \$(OBJ_DIR)"
@@ -208,7 +215,7 @@ if [ "$TYPE" -eq "2" ] ; then
 	add_line "\$(OBJ_DIR):"
 	add_line "\t@mkdir -p \$(OBJ_DIR)"
 
-	echo "${W}Would you like to include $P$LIB$W from $P$LIBDIR$W ?"
+	echo "${W}Would you like to include $P$LIB$W from $P$LDIR$W ?"
 	echo "\t${C}[1]$W yes"
 	echo "\t${C}[2]$W no"
 	read TYPE
@@ -226,7 +233,7 @@ if [ "$TYPE" -eq "2" ] ; then
 		echo "${W}Enter library name: (folder name should match)"
 		read LIB
 		echo "Enter path to library:"
-		read LIBDIR
+		read LDIR
 		add_lib
 		echo "${W}Would you like to include another library?"
 		echo "\t${C}[1]$W yes"
