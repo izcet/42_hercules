@@ -1,17 +1,34 @@
 #!/bin/sh
 
-## Variables ##################################################################
+## User Variables #############################################################
 
-INC=inc
-SRC=src
-MAK=Makefile
+# Default Library
 LIB=libft
+
+# Location of Default Library
 LDIR=~/backups/projects
 
-GIT=.git
-VIM=.stdheader # file to call that contains vim commands for a new file
-COM=":Stdheader\ndd\n:wq" # commands inside that ^ file
+## Variables ##################################################################
 
+# Output directory for C includes
+INC=inc
+
+# Output directory for C source code
+SRC=src
+
+# Name of C Makefile
+MAK=Makefile
+
+# Default git directory. (Is updated if $GIT_DIR is set)
+GIT=.git
+
+# File containing vim commands to be run on each file
+VIM=.vim_commands
+
+# The commands in said file
+COM=":Stdheader\ndd\n:wq"
+
+# Colors, for beauty
 R='\033[31m' # Red
 Y='\033[33m' # Yellow
 G='\033[32m' # Green
@@ -23,19 +40,25 @@ N='\033[0m'	 # No Color
 
 ## Functions ##################################################################
 
+# Output a red error message
+# usage: error <text>
 error () {
 	echo "${R}Error: $1${N}"
 }
 
-stdheader () {
+# Create a file inside vim and run the commands
+# usage: make_with_vim <filename>
+make_with_vim () {
 	if [ -z $1 ] ; then
-		error "NULL parameter passed to ${P}stdheader()"
+		error "NULL parameter passed to ${P}make_with_vim()"
 		return 1
 	fi
 	echo "${G}Creating file ${P}$1"
 	vim -s $VIM $1
 }
 
+# Create a directory. somewhat redundant
+# usage: make_dir <directory>
 make_dir () {
 	if [ -z $1 ] ; then
 		error "NULL parameter passed to ${P}make_dir()"
@@ -45,10 +68,15 @@ make_dir () {
 	mkdir $1
 }
 
+# Append a line of text to the end of the Makefile
+# usage: add_line <text>
 add_line () {
 	echo "$1" >> $MAK
 }
 
+# Insert a line of text at a specific line number
+# WARNING: may be off-by-one. check before use
+# usage: insert_at <text> <line number>
 insert_at () {
 	head -n $2 $MAK > .temp$MAK
 	echo "$1\c" >> .temp$MAK
@@ -56,9 +84,17 @@ insert_at () {
 	mv .temp$MAK $MAK
 }
 
+# Add the necessary blocks of code to a C Makefile to include a library
+# Initially uses default values later in this code
+# WARNING: But those values have to be set before each new call
+# usage: add_lib 
 add_lib () {
 	if [ ! -d $LDIR/$LIB ] ; then
-		error "No ${P}$LIB${R} directory found at ${P}$LDIR"
+		error "No $P$LIB$R directory found at ${P}$LDIR"
+		return 1
+	fi
+	if [ -d ./$LIB ] ; then
+		error "Library $P$LIB$R already exists in this directory."
 		return 1
 	fi
 	make_dir ./$LIB
@@ -68,18 +104,20 @@ add_lib () {
 	NLIB=$(echo $LIB | awk '{print toupper($0)}')
 	add_line "\n\$($NLIB):"
 	add_line "\t@\$(MAKE) -C \$(${NLIB}_DIR)"
-
 	insert_at "" 27
 	insert_at "$NLIB\t\t=\t\$(${NLIB}_DIR)/\$(${NLIB}_LIB)" 27
-	insert_at "${NLIB}_INC\\t=\\t#includes folder" 27
-	insert_at "${NLIB}_LIB\t=\t#$LIB.a" 27
+	insert_at "${NLIB}_INC\\t=\\t#includes directory, if applicable" 27
+	insert_at "${NLIB}_LIB\t=\t$LIB.a #assuming project is named the same" 27
 	insert_at "${NLIB}_DIR\t=\t$LIB" 27
-	sed -i '' -e "s/I inc/I \\\$(${NLIB}_DIR)/\\\$(${NLIB}_INC) -I inc/" $MAK
+	sed -i '' -e "s|I $INC|I \$(${NLIB}_DIR)/\\\$(${NLIB}_INC) -I $INC|" $MAK
 	sed -i '' "s/^.PHONY: /.PHONY: $LIB /" $MAK
 	sed -i '' "s/^all: /all: \$($NLIB) /" $MAK
-	#sed -i '' "s/^clean:/clean:
-	# handle clean
-	# handle fclean
+	# This nonsense here. sed requires an escaped literal newline and tab
+	sed -i '' "s/^clean:/clean:\\
+	@cd \$(${NLIB}_DIR) \&\& make clean/" $MAK
+	sed -i '' "s/^fclean:/fclean:\\
+	@cd \$(${NLIB}_DIR) \&\& make fclean/" $MAK
+	sed -i '' "s/\$(CC) \$(FLAGS)/\$(CC) \$(FLAGS) \$(${NLIB})/" $MAK
 }
 
 ## Code #######################################################################
@@ -179,13 +217,13 @@ if [ "$TYPE" -eq "2" ] ; then
 	make_dir $SRC
 	make_dir $INC
 
-	stdheader $INC/$NAME.h
+	make_with_vim $INC/$NAME.h
 	echo "${B}Protecting against double inclusion."
 	echo "#ifndef $(echo $NAME | awk '{print toupper($0)}')_H" >> $INC/$NAME.h
 	echo "# define $(echo $NAME | awk '{print toupper($0)}')_H" >> $INC/$NAME.h
 	echo "\n\n\n#endif" >> $INC/$NAME.h
 
-	stdheader $MAK
+	make_with_vim $MAK
 	echo "${B}Prepopulating text in ${P}$MAK"
 	add_line "NAME\t\t=\t$NAME\n" 					#line 13, 14
 	add_line "CC\t\t\t=\tgcc"							#line 15
@@ -202,15 +240,13 @@ if [ "$TYPE" -eq "2" ] ; then
 	add_line ".PHONY: all clean fclean re\n" #libft
 	add_line "all: \$(NAME)\n"
 	add_line "\$(NAME): \$(SRCS) | \$(OBJS)"
-	add_line "\t\$(CC) \$(FLAGS) \$(LIB) \$(OBJS) \$(INC_DIR) -o \$(NAME)\n"
+	add_line "\t\$(CC) \$(FLAGS) \$(OBJS) \$(INC_DIR) -o \$(NAME)\n"
 	add_line "\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.c | \$(OBJ_DIR)"
 	add_line "\t@\$(CC) -c \$^ \$(CFLAGS) \$(INC_DIR) -o \$@\n"
 	add_line "clean:"
-	add_line "\t@rm -rf \$(OBJ_DIR)"
-	add_line "\t#@cd \$(LIBFT_DIR) && make clean"
+	add_line "\t@rm -rf \$(OBJ_DIR)\n"
 	add_line "fclean:"
-	add_line "\t@rm -f \$(NAME)"
-	add_line "\t#@cd \$(LIBFT_DIR) && make fclean\n"
+	add_line "\t@rm -f \$(NAME)\n"
 	add_line "re: fclean all\n"
 	add_line "\$(OBJ_DIR):"
 	add_line "\t@mkdir -p \$(OBJ_DIR)"
@@ -244,10 +280,10 @@ if [ "$TYPE" -eq "2" ] ; then
 		error "${C}$TYPE${R} is not a valid response."
 	fi
 	rm $VIM
-	fi
+fi
 
-	echo "${B}Adding files to git and making first commit.${W}"
-	git add .
-	git status
-	git commit -m "Initial commit"
-	echo "\n\t${G}Done.${N}\n"
+echo "${B}Adding files to git and making first commit.${W}"
+git add .
+git status
+git commit -m "Initial commit"
+echo "\n\t${G}Done.${N}\n"
