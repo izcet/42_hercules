@@ -90,7 +90,7 @@ insert_at () {
 # usage: add_lib 
 add_lib () {
 	if [ ! -d $LDIR/$LIB ] ; then
-		error "No $P$LIB$R directory found at ${P}$LDIR"
+		error "No directory found at ${P}$LDIR/$LIB$R"
 		return 1
 	fi
 	if [ -d ./$LIB ] ; then
@@ -268,9 +268,9 @@ if [ "$TYPE" -eq "2" ] ; then
 	echo "\t${C}[2]$W no"
 	read TYPE
 	while [ "$TYPE" -eq "1" ] ; do
-		echo "${W}Enter library name: (folder name should match)"
+		echo "${W}Enter library directory name:"
 		read LIB
-		echo "Enter path to library:"
+		echo "Enter path to library: (full path to library)"
 		read LDIR
 		add_lib
 		echo "${W}Would you like to include another library?"
