@@ -174,11 +174,12 @@ while [ -z $URL ] ; do
 done
 echo "${B}Adding remote ${C}origin${B} at ${P}$URL${B}"
 git remote add origin $URL
-git pull origin master 2> /dev/null
 if [ "$?" -eq 1 ] ; then
 	error "Invalid repository. ${C}origin${R} will have to be manually set."
 	git remote rm origin
 	echo "${B}Remote ${C}origin${B} removed."
+else
+	git pull origin master 2> /dev/null
 fi
 
 echo "${W}(OPTIONAL) What is the ${C}github${W} repository url?"
@@ -187,11 +188,12 @@ read URL
 if [ ! -z $URL ] ; then
 	echo "${B}Adding remote ${C}gh${B} at ${P}$URL${B}"
 	git remote add gh $URL
-	git pull gh master 2> /dev/null
 	if [ "$?" -eq 1 ] ; then
 		error "Invalid repository. ${C}gh${R} will have to be manually set."
 		git remote rm gh
 		echo "${B}Remote ${C}gh${B} removed."
+	else
+		git pull gh master 2> /dev/null	
 	fi
 else
 	echo "\033[1A${B}Skipping..."
