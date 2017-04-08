@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 23:29:04 by irhett            #+#    #+#             */
-/*   Updated: 2017/04/07 21:32:05 by irhett           ###   ########.fr       */
+/*   Updated: 2017/04/07 21:36:10 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int						main(int argc, char **argv)
 		ft_error("initiating sigterm handler.");
 	while (!done)
 	{
-		//pid = fork();
+		pid = fork();
 		if	(pid)
 			ft_putendl("Oops I had a kid.");
 		sleep(5);
