@@ -7,9 +7,9 @@ TODO:
   - Provide links to more detailed resources for each project.
 
 ### Nemean Lion
-> This week's project was a very basic introduction to `ssh` and ports.
-> The requirement was a script that would change the default `sshd` port on a machine to a new port and restart the service.
-
+This week's project was a very basic introduction to `ssh` and ports.
+The requirement was a script that would change the default `sshd` port on a machine to a new port and restart the service.
+  
 
 ### Lernaean Hydra
 The objective was to create a server that would listen for a connection, accept, and respond to the string `"ping"` with two `"pong"`s.
