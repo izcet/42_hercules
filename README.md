@@ -4,7 +4,7 @@ Modeled after the trials of the Greek Demigod Hercules in flavor, each challenge
 
 TODO:
   - Add links to all the subject pages.
-  - Provide links to more detailed resources for each project.
+  - Provide links to more detailed resources for each project.  
 
 ### Nemean Lion
 This week's project was a very basic introduction to `ssh` and ports.
