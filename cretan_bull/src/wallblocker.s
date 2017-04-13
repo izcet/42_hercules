@@ -1,9 +1,12 @@
-.name "Mind Razors"
-.comment "Just think like I do and I'll be okay."
+.name "Wall Blocker"
+.comment "Don't think, you'll only hurt yourself."
 
 
 st r1, 6
 init:
+	live %1
+	fork %:wallinit
+	st r1, 6
 	live %1
 	fork %:init
 	st r1, 6
@@ -27,7 +30,7 @@ odds:
 			zjmp %:launch
 		
 		three:
-			ld %720, r1
+			ld %720, r1 #0
 			ld %-52, r2
 			and %0, %0, r3
 			zjmp %:launch
@@ -66,7 +69,7 @@ evens:
 			zjmp %:launch
 
 		four:
-			ld %393473, r1
+			ld %393473, r1 #150994945
 			ld %-48, r2
 			and %0, %0, r3
 			zjmp %:launch
@@ -90,4 +93,45 @@ evens:
 
 launch:
 	sti r1, r2, %:init
-	zjmp %-375 
+	zjmp %-388 #375 without wall 
+
+wallinit:
+	st r1, 6
+	live %1
+	fork %:negwall
+	st r1, 6
+	live %1
+	fork %:poswall
+	st r1, 6
+	live %1
+	fork %:init
+	and %0, %0, r5
+	zjmp %:wallinit
+
+negwall:
+	ld %3, r2
+	ld %200, r3
+	st r1, 6
+	live %1
+	and %0, %0, r5
+	fork %:negwall
+	zjmp %:bothwall
+
+poswall:
+	ld %4, r2
+	ld %100, r3
+	st r1, 6
+	live %1
+	and %0, %0, r5
+	fork %:poswall
+	zjmp %:bothwall
+
+bothwall:
+	st r1, 6
+	live %1
+	ld %589824, r4
+	sti r4, r3, %0
+	add r2, r3, r3
+	and %0, %0, r5
+	zjmp %:bothwall
+
