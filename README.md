@@ -40,3 +40,7 @@ An introduction to Fork Bombs.
 This two-part project required us to come up with a script that could disarm a `fork()` bomb executable.
 We then had to write our own fork bomb to be just as devastating if not more.
 I opted not to write out the spam of text files created by the original, instead my variant ignores the various `SIGNALS` sent to it to be harder to kills.
+<br><br>
+### Girdle of Hippolyta
+My first emailer script.
+This project required us to use a high-level (non-bash) programming or scripting language to send (and also optionally recieve) emails. My python script can send email to multiple users and attach multiple files from command line arguments.
