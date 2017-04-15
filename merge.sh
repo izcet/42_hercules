@@ -29,6 +29,8 @@ git remote add temp $FULL
 git fetch temp
 git merge temp/master
 git rm temp
+git add .
+git commit -a -m "Merged $CURR with master"
 gp
 
 cd $FULL
