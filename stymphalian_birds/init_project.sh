@@ -247,7 +247,7 @@ if [ "$TYPE" -eq "2" ] ; then
 	add_line "\t@\$(CC) -c \$^ \$(CFLAGS) \$(INC_DIR) -o \$@\n"
 	add_line "clean:"
 	add_line "\t@rm -rf \$(OBJ_DIR)\n"
-	add_line "fclean:"
+	add_line "fclean: clean"
 	add_line "\t@rm -f \$(NAME)\n"
 	add_line "re: fclean all\n"
 	add_line "\$(OBJ_DIR):"
