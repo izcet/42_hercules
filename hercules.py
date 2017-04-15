@@ -6,7 +6,7 @@
 #    By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/04/14 14:25:37 by irhett            #+#    #+#              #
-#    Updated: 2017/04/14 19:02:30 by irhett           ###   ########.fr        #
+#    Updated: 2017/04/14 19:11:52 by irhett           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,11 +29,11 @@ def main(argv):
 	try:
 		opts, args = getopt.getopt(argv,"hs:m:r:a:")
 	except getopt.GetoptError:
-		print 'hercules.py -s <subjectfile> -m <messagefile> -r <recipientfile> [ -a <attachment> ] ...'
+		print 'hercules.py -s <subjectfile> -m <messagefile> -r <intra_names> [ -e <email> ] [ -a <attachment> ] ...'
 		sys.exit(2)
 	for opt, arg in opts:
 		if (opt == '-h'):
-			print 'hercules.py -s <subjectfile> -m <messagefile> -r <recipientfile> [ -a <attachment> ] ...'
+			print 'hercules.py -s <subjectfile> -m <messagefile> -r <intra_names> [ -e <email> ] [ -a <attachment> ] ...'
 			sys.exit()
 		if (opt == '-s'):
 			subject_file = open(os.path.join(my_dir, arg), "r")
@@ -48,10 +48,12 @@ def main(argv):
 			for line in recipient_file:
 				message_recipients.append(line[:-1] + "@student.42.us.org")
 			recipient_file.close()
+		elif (opt == '-e'):
+			message_recipients.append(arg)
 		elif (opt == '-a'):
 			message_attachments.append(os.path.join(my_dir, arg))
 		else:
-			print 'hercules.py -s <subjectfile> -m <messagefile> -r <recipientfile> [ -a <attachment> ] ...'
+			print 'hercules.py -s <subjectfile> -m <messagefile> -r <intra_names> [ -e <email> ] [ -a <attachment> ] ...'
 			sys.exit(2)
 	msg = MIMEMultipart()
 	msg['From'] = fromaddr
