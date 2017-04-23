@@ -7,6 +7,8 @@ BACK=~/backups/projects/hercules
 
 FULL=~/$PROJ_DIR$CURR
 
+git remote rm temp
+
 if [ ! -d $FULL ] ; then
 	echo "project folder \"$CURR\" not found."
 	exit
