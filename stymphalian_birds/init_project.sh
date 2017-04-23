@@ -115,7 +115,7 @@ add_lib () {
 	# This nonsense here. sed requires an escaped literal newline and tab
 	sed -i '' "s/^clean:/clean:\\
 	@cd \$(${NLIB}_DIR) \&\& make clean/" $MAK
-	sed -i '' "s/^fclean:/fclean:\\
+	sed -i '' "s/^fclean: clean/fclean: clean\\
 	@cd \$(${NLIB}_DIR) \&\& make fclean/" $MAK
 	sed -i '' "s/\$(CC) \$(FLAGS)/\$(CC) \$(FLAGS) \$(${NLIB})/" $MAK
 }

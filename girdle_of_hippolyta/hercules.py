@@ -6,13 +6,20 @@
 #    By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/04/14 14:25:37 by irhett            #+#    #+#              #
+<<<<<<< HEAD
 #    Updated: 2017/04/18 13:00:57 by irhett           ###   ########.fr        #
+=======
+#    Updated: 2017/04/14 19:11:52 by irhett           ###   ########.fr        #
+>>>>>>> temp/master
 #                                                                              #
 # **************************************************************************** #
 
 import sys, getopt
 import smtplib
+<<<<<<< HEAD
 import os
+=======
+>>>>>>> temp/master
 import os.path
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -26,9 +33,15 @@ def main(argv):
 	message_attachments = []
 	my_dir = os.path.dirname(__file__)
 	fromaddr = "hercules@amazon.com"
+<<<<<<< HEAD
 	ky = os.environ['SENDGRID']
 	try:
 		opts, args = getopt.getopt(argv,"hs:m:r:e:a:")
+=======
+	ky = "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"
+	try:
+		opts, args = getopt.getopt(argv,"hs:m:r:a:")
+>>>>>>> temp/master
 	except getopt.GetoptError:
 		print 'hercules.py -s <subjectfile> -m <messagefile> -r <intra_names> [ -e <email> ] [ -a <attachment> ] ...'
 		sys.exit(2)
