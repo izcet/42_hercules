@@ -6,7 +6,7 @@
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 18:40:45 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/19 14:28:26 by irhett           ###   ########.fr       */
+/*   Updated: 2017/05/07 21:28:27 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,48 @@ volatile sig_atomic_t	done = 0;
 
 static void				term(int signum)
 {
-	if (signum == SIGINT)
-		ft_putchar('\n');
-	if (signum == SIGTERM)
-		ft_putendl("Ouch! Why'd you have to stab me in the back?");
+	if (signum == SIGINT || signum == SIGTERM)
+		ft_putendl("Closing server from external signal.");
 	done = 1;
+}
+
+int						address_forwardable(char *s1, char *s2, char *s3)
+{
+	if (ft_strcmp(s1, "GET") != 0)
+		return (0);
+	if ((ft_strncmp(s3, "HTTP:/1.1", 8) == 0) || \
+			(ft_strcmp(s3, "HTTP:/1.0", 8) == 0))
+	{
+		if (ft_strncmp(s2, "http://", 7) == 0)
+			return (1);
+	}
+	return (0);
+}
+
+static void				forward_request(s_cli *tc)
+{
+	char	*s1;
+	char	*s2;
+	char	*s3;
+	int		br;
+
+	br = get_next_line(tc->sockfd, &s1);
+	if (br < 0)
+		ft_error("Unable to read from socket in child process.");
+	br = get_next_line(tc->sockfd, &s2);
+	if (br < 0)
+		ft_error("Unable to read from socket in child process.");
+	br = get_next_line(tc->sockfd, &s3);
+	if (br < 0)
+		ft_error("Unable to read from socket in child process.");
+	if (address_forwardable(s1, s2, s3))
+	{
+		ft_putstr("Making request to: ");
+		ft_putendl(s2);
+
+	}
+	else
+		ft_error("Malformed request.");
 }
 
 static void				listen_to_client(s_srv *srv)
@@ -32,27 +69,7 @@ static void				listen_to_client(s_srv *srv)
 	if (!this_pid)
 	{
 		tc = (*srv).first;
-		(*tc).pid = this_pid;
-		while (!done && (*tc).br >= 0)
-		{
-			while (((*tc).br = read((*tc).sockfd, (*tc).buffer, BUFF_SIZE)) > 0)
-			{
-				ft_bzero((*tc).buffer, BUFF_SIZE);
-				if (ft_strcmp((*tc).buffer, "ping\n") == 0)
-					write((*tc).sockfd, "pong\npong\n", 10);
-				else if (ft_strcmp((*tc).buffer, "fuck you\n") == 0)
-				{
-					write((*tc).sockfd, "No, Fuck you.\n", 14);
-					close((*tc).sockfd);
-					ft_putendl("Stopped talking to client, they were rude.");
-					(*tc).sockfd = -1;
-					(*tc).br = -1;
-				}
-				else
-					write((*tc).sockfd, "I don't understand you.\n", 24);
-				ft_bzero((*tc).buffer, BUFF_SIZE);
-			}
-		}
+		forward_request(tc);
 		_exit(0);
 	}
 }
@@ -73,7 +90,7 @@ int						main(int argc, char **argv)
 		error("initiating sigterm handler.");
 	while (!done)
 	{
-		listen((*srv).sockfd, 5);
+		listen((*srv).sockfd, CLI_QUEUE);
 		tmp_cli = init_cli_struct();
 		(*tmp_cli).sockfd = client_connection(tmp_cli, srv);
 		if ((*tmp_cli).sockfd < 0)

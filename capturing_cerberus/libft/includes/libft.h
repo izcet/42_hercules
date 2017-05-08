@@ -6,7 +6,7 @@
 /*   By: irhett <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/22 22:02:27 by irhett            #+#    #+#             */
-/*   Updated: 2017/04/18 22:19:24 by irhett           ###   ########.fr       */
+/*   Updated: 2017/05/07 21:03:31 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <unistd.h>
 
 # define BUFF_SIZE	32
-# define DELIM		'\n'
+# define DELIM		'\0'
 
 typedef struct		s_list
 {

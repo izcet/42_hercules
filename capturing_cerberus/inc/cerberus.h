@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pingpong.h                                         :+:      :+:    :+:   */
+/*   cerberus.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: irhett <irhett@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 14:33:04 by irhett            #+#    #+#             */
-/*   Updated: 2017/02/18 19:01:21 by irhett           ###   ########.fr       */
+/*   Updated: 2017/05/07 21:28:17 by irhett           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PINGPONG_H
-#define PINGPONG_H
+#ifndef CERBERUS_H
+# define CERBERUS_H
 
-#include "libft.h"
+# include "libft.h"
 
-#include <sys/types.h>		// for socket()
-#include <sys/socket.h>		// for socket()
-#include <netinet/in.h>		// for struct sockaddr_in
-#include <stdio.h>			// for verbose printf() messages
-#include <signal.h>			// for handling SIGTERM closure
-#include <arpa/inet.h>		// for inet_aton() in client
+# include <sys/types.h>		// for socket()
+# include <sys/socket.h>		// for socket()
+# include <netinet/in.h>		// for struct sockaddr_in
+# include <signal.h>			// for handling SIGTERM closure
+# include <arpa/inet.h>		// for inet_aton() in client
+
+# define CLI_QUEUE		20
 
 typedef struct			srv_cli_info
 {
@@ -37,12 +38,13 @@ typedef struct			srv_info
 {
 	struct sockaddr_in	serv_addr;
 	int					sockfd;
-	struct srv_cli_info	*first;
+	s_cli				*first;
 }						s_srv;
 
 int		open_inet_socket(void);
 int		bind_local_socket(int s_fd, char *port, struct sockaddr_in *srv_adr);
 int		connect_to_ip(char *ip, char *port, int sockfd);
+
 int		init_sighandler(struct sigaction *action, void (*handle)(int));
 s_srv	*init_serv_struct(char *port);
 s_cli	*init_cli_struct(void);
