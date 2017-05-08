@@ -208,6 +208,9 @@ if [ "$TYPE" -eq "2" ] ; then
 fi
 echo "*.swp" >> $GIT/info/exclude
 
+echo "${G}Creating ${P}author${G} file."
+echo "$(whoami)" > author
+
 if [ "$TYPE" -eq "1" ] ; then
 	echo "${G}Creating file ${P}$NAME.sh"
 	echo "#!/bin/sh\n" > $NAME.sh
