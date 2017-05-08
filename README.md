@@ -43,4 +43,18 @@ I opted not to write out the spam of text files created by the original, instead
 <br><br>
 ### Girdle of Hippolyta
 My first emailer script.
-This project required us to use a high-level (non-bash) programming or scripting language to send (and also optionally recieve) emails. My python script can send email to multiple users and attach multiple files from command line arguments.
+This project required us to use a high-level (non-bash) programming or scripting language to send (and also optionally recieve) emails. My python script can send email to multiple users and attach multiple files from command line arguments
+<br><br>
+### Cattle of Geryon
+This task of this week was to write a website stress-tester in any language. I chose Python to write my \*cough cough
+DOS cough \* testing software.
+<br><br>
+### Apples of Hesperides
+This week was a piece of cake for me. The objective was to become familiar with `rsa` ssh keys and copying them to
+servers for non-password authentication. (See [this](https://github.com/izcet/moonlight_ssh_tunnel_demo))
+<br><br>
+### Capturing Cerberus
+This week revisited low-level sockets and data transfer in C, and we were required to write a HTTP proxy server. I
+started this project with the foundation I had set with the Lernaean Hydra, but having only one evening to work on this
+after volunteering/mentoring/participating in a 26 hour hackathon and running off 3 hours of sleep 2 nights in a row, I
+didn't have the energy to finish it.
