@@ -15,21 +15,21 @@ I went above and beyond and implemented `fork()` to handle multiple client conne
 <br><br>
 ### Ceryneian Hind
 ~~This week's project was an introduction to web requests and APIs.~~
-I forgot to register for this week and was unable to participate.
+I missed registration for this week and was unable to participate.
 <br><br>
 ### Erymanthian Boar
 This project was an introduction to timed linux commands, using `at` rather than `cron` for a single event.
 The script I provided to be executed `at [time]` was `bomb.sh`, a self-destructive script riddled with escape codes for humorous text.
 <br><br>
 ### Augean Stables
-This project was supposed to be a challenge in memory managment, but due to time mismanagement of the staff an incomplete problem set was pushed.
+This project was supposed to be a challenge in memory managment, however an incomplete problem set was pushed.
 The solution was to match up some `free()` commands to stop the excessive `malloc()` memory leaks.
 <br><br>
 ### Stymphalian Birds
 A project aimed at reducing the amount of time and overhead taken up by starting a new code project.
 My script sets up the initial git repository, lays out the structure and initial `Makefile` and `inc/[header].h` files.
 Then I include other code libraries as needed and prompt the user for the remotes that this project will be pushed to.
-My work is focused primarily on C project initialization.
+My work is focused primarily on C project initialization (I included an extensive BASH script to pre-generate a Makefile with all of the compilation flags and libraries included).
 <br><br>
 ### Cretan Bull
 An introduction to programming in Assembly, this project uses the School's custom COREWAR engine.
